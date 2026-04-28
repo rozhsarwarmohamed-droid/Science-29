@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>🌑 6.2 The Moon – Science Lesson</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   CSS CUSTOM PROPERTIES
+═══════════════════════════════════════════ */
+:root {
+  --bg:        #020814;
+  --navy:      #050f28;
+  --panel:     rgba(8,20,55,0.85);
+  --cyan:      #00e5ff;
+  --gold:      #ffd700;
+  --pink:      #ff6eb4;
+  --green:     #39ff14;
+  --red:       #ff4455;
+  --purple:    #9b59f0;
+  --white:     #e8f4ff;
+  --sidebar-w: 116px;
+  --radius:    18px;
+  --shadow:    0 8px 32px rgba(0,0,0,0.5);
+}
+
+/* ═══════════════════════════════════════════
+   RESET + ROOT
+═══════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html {
+  font-size: 16px;
+  height: 100%;
+  height: 100dvh;
+}
+
+body {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ═══════════════════════════════════════════
+   STAR CANVAS
+═══════════════════════════════════════════ */
+#starCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════ */
+#sidebar {
+  position: relative;
+  z-index: 100;
+  width: var(--sidebar-w);
+  height: 100%;
+  flex-shrink: 0;
+  background: rgba(2,8,20,0.96);
+  border-right: 2px solid rgba(0,229,255,0.2);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 6px 20px;
+  gap: 8px;
+  backdrop-filter: blur(12px);
+}
+
+.sb-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 9.5px;
+  color: var(--cyan);
+  text-align: center;
+  line-height: 1.45;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.sb-unit {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  text-align: center;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.sb-divider {
+  width: 56px;
+  height: 1px;
+  background: rgba(0,229,255,0.18);
+  flex-shrink: 0;
+}
+
+/* Nav button */
+.nav-btn {
+  position: relative;
+  width: 96px;
+  min-height: 68px;
+  padding: 10px 6px 8px;
+  border: 2px solid rgba(0,229,255,0.28);
+  border-radius: 14px;
+  background: rgba(0,229,255,0.05);
+  color: rgba(232,244,255,0.7);
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+  line-height: 1.25;
+  transition: all 0.25s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+.nav-btn .ni { font-size: 24px; line-height: 1; }
+.nav-btn:hover, .nav-btn.active {
+  background: rgba(0,229,255,0.18);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 18px rgba(0,229,255,0.35);
+  transform: translateX(3px);
+}
+/* Progress dot */
+.nav-dot {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  transition: all 0.4s;
+}
+.nav-dot.done {
+  background: var(--green);
+  border-color: var(--green);
+  box-shadow: 0 0 8px var(--green);
+}
+
+/* Arrow buttons */
+.sb-arrow {
+  width: 96px;
+  height: 52px;
+  border-radius: 14px;
+  border: 2px solid rgba(255,215,0,0.4);
+  background: rgba(255,215,0,0.07);
+  color: var(--gold);
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+.sb-arrow:hover {
+  background: rgba(255,215,0,0.2);
+  box-shadow: 0 0 16px rgba(255,215,0,0.4);
+  transform: scale(1.07);
+}
+.sb-arrow:disabled {
+  opacity: 0.22;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Progress bar */
+#prog-track {
+  width: 6px;
+  flex: 1;
+  min-height: 40px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+#prog-fill {
+  width: 100%;
+  height: 25%;
+  background: linear-gradient(to bottom, var(--cyan), var(--gold));
+  border-radius: 3px;
+  transition: height 0.5s ease;
+}
+
+#sb-timer {
+  font-family: 'Orbitron', monospace;
+  font-size: 10.5px;
+  color: rgba(255,255,255,0.4);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   MAIN SCROLL AREA  — MOST CRITICAL
+═══════════════════════════════════════════ */
+#main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;           /* REQUIRED flex child shrink */
+  height: 100%;
+  overflow-y: scroll;      /* 'scroll' not 'auto' for Android WebView */
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+  padding-bottom: calc(220px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ═══════════════════════════════════════════
+   SCREENS
+═══════════════════════════════════════════ */
+.screen {
+  display: none;
+  padding: 36px 44px 36px 36px;
+  min-height: 100%;
+  animation: screenIn 0.55s ease;
+}
+.screen.active { display: block; }
+
+@keyframes screenIn {
+  from { opacity:0; transform: translateY(18px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════
+   TYPOGRAPHY
+═══════════════════════════════════════════ */
+.tag {
+  display: inline-block;
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  opacity: 0.9;
+}
+.s-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(22px, 3.2vw, 40px);
+  font-weight: 900;
+  color: var(--gold);
+  text-shadow: 0 0 28px rgba(255,215,0,0.5);
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+.s-sub {
+  font-size: 17px;
+  color: rgba(232,244,255,0.72);
+  font-weight: 600;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+.glow-c { color:var(--cyan);   text-shadow:0 0 10px rgba(0,229,255,0.6); }
+.glow-g { color:var(--gold);   text-shadow:0 0 10px rgba(255,215,0,0.6); }
+.glow-p { color:var(--purple); text-shadow:0 0 10px rgba(155,89,240,0.6); }
+.glow-k { color:var(--pink);   text-shadow:0 0 10px rgba(255,110,180,0.6); }
+
+/* ═══════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════ */
+.card {
+  background: var(--panel);
+  border: 1.5px solid rgba(0,229,255,0.18);
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+}
+.card + .card { margin-top: 18px; }
+.card-gold  { border-color: rgba(255,215,0,0.28); }
+.card-purple{ border-color: rgba(155,89,240,0.28); }
+.card-green { border-color: rgba(57,255,20,0.28); }
+.card-pink  { border-color: rgba(255,110,180,0.28); }
+
+.card-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 13px 28px;
+  border-radius: 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  transition: all 0.22s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  letter-spacing: 0.3px;
+}
+.btn-c { background:linear-gradient(135deg,#008fcc,#00e5ff); color:#020814;
+         box-shadow:0 5px 22px rgba(0,229,255,0.38); }
+.btn-g { background:linear-gradient(135deg,#cc8800,#ffd700); color:#020814;
+         box-shadow:0 5px 22px rgba(255,215,0,0.38); }
+.btn-p { background:linear-gradient(135deg,#6a2abf,#9b59f0); color:#fff;
+         box-shadow:0 5px 22px rgba(155,89,240,0.38); }
+.btn-green { background:linear-gradient(135deg,#009900,#39ff14); color:#020814;
+         box-shadow:0 5px 22px rgba(57,255,20,0.38); }
+.btn-pink { background:linear-gradient(135deg,#cc2277,#ff6eb4); color:#fff;
+         box-shadow:0 5px 22px rgba(255,110,180,0.38); }
+.btn:hover { transform:scale(1.05); filter:brightness(1.1); }
+.btn:active { transform:scale(0.97); }
+
+/* ═══════════════════════════════════════════
+   TOAST NOTIFICATION
+═══════════════════════════════════════════ */
+#toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-80px);
+  background: rgba(8,20,55,0.97);
+  border-radius: 50px;
+  padding: 14px 30px;
+  font-size: 17px;
+  font-weight: 800;
+  z-index: 9999;
+  pointer-events: none;
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  border: 2px solid rgba(0,229,255,0.3);
+  white-space: nowrap;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+}
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ═══════════════════════════════════════════
+   STAR BURST
+═══════════════════════════════════════════ */
+.star-burst {
+  position: fixed;
+  pointer-events: none;
+  font-size: 34px;
+  z-index: 9999;
+  animation: burst 1.3s ease forwards;
+}
+@keyframes burst {
+  0%   { transform:scale(0) rotate(0deg); opacity:1; }
+  60%  { transform:scale(1.6) rotate(200deg); opacity:1; }
+  100% { transform:scale(0.4) rotate(380deg); opacity:0; }
+}
+
+/* ═══════════════════════════════════════════
+   SHAKE ANIMATION
+═══════════════════════════════════════════ */
+@keyframes shake {
+  0%,100% { transform:translateX(0); }
+  20%      { transform:translateX(-8px); }
+  40%      { transform:translateX(8px); }
+  60%      { transform:translateX(-5px); }
+  80%      { transform:translateX(5px); }
+}
+.shake { animation: shake 0.45s ease; }
+
+/* ════════════════════════════════════════════
+   SCREEN 1 – MYTH SORT (GETTING STARTED)
+════════════════════════════════════════════ */
+#s1-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+}
+.myth-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 12px 20px;
+  background: rgba(255,255,255,0.07);
+  border: 2px solid rgba(255,255,255,0.18);
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.myth-chip:hover { border-color:rgba(0,229,255,0.5); }
+.myth-chip.selected { border-color:var(--gold); background:rgba(255,215,0,0.12);
+  box-shadow:0 0 14px rgba(255,215,0,0.3); }
+.myth-chip.sorted-true  { border-color:var(--green); background:rgba(57,255,20,0.1); pointer-events:none; }
+.myth-chip.sorted-false { border-color:var(--red);   background:rgba(255,68,85,0.1); pointer-events:none; }
+
+#s1-zones {
+  display: flex;
+  gap: 18px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.sort-zone {
+  flex: 1;
+  min-width: 200px;
+  min-height: 100px;
+  border: 2.5px dashed rgba(255,255,255,0.22);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  transition: all 0.25s;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.sort-zone:hover { border-color:rgba(0,229,255,0.5); background:rgba(0,229,255,0.05); }
+.sort-zone.zone-true  { border-color:var(--green); background:rgba(57,255,20,0.07); }
+.sort-zone.zone-false { border-color:var(--red);   background:rgba(255,68,85,0.07); }
+.zone-title {
+  font-family:'Orbitron',monospace;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:12px;
+  display:flex; align-items:center; gap:8px;
+}
+.zone-items { display:flex; flex-wrap:wrap; gap:8px; min-height:38px; }
+.zone-chip {
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.zone-chip.t { background:rgba(57,255,20,0.15); border:1.5px solid var(--green); color:var(--green); }
+.zone-chip.f { background:rgba(255,68,85,0.15);  border:1.5px solid var(--red);   color:var(--red); }
+
+/* ════════════════════════════════════════════
+   SCREEN 2 – MOON FACTS + ORBIT ANIMATION
+════════════════════════════════════════════ */
+#orbit-stage {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 1 / 0.7;
+  margin: 0 auto 20px;
+}
+#orbit-canvas { width:100%; height:100%; border-radius:16px; }
+
+.fact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.fact-tile {
+  background: rgba(8,20,55,0.8);
+  border: 1.5px solid rgba(0,229,255,0.18);
+  border-radius: 16px;
+  padding: 18px 16px;
+  cursor: pointer;
+  transition: all 0.25s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fact-tile:hover { border-color:var(--cyan); background:rgba(0,229,255,0.08);
+  box-shadow:0 0 18px rgba(0,229,255,0.2); transform:translateY(-3px); }
+.fact-tile .fi { font-size: 32px; }
+.fact-tile .fq { font-size: 15px; font-weight: 700; color:rgba(232,244,255,0.7); }
+.fact-tile .fa { font-size: 16px; font-weight: 800; color:var(--cyan); display:none; line-height:1.45; }
+.fact-tile.open .fq { display:none; }
+.fact-tile.open .fa { display:block; }
+.fact-tile.open { border-color:var(--cyan); background:rgba(0,229,255,0.1);
+  box-shadow:0 0 22px rgba(0,229,255,0.25); }
+
+/* Quiz row */
+.quiz-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+.quiz-q {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.quiz-opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.quiz-opt {
+  min-height: 48px;
+  padding: 10px 22px;
+  border-radius: 50px;
+  border: 2px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.05);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.22s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.quiz-opt:hover { border-color:rgba(0,229,255,0.5); }
+.quiz-opt.correct { border-color:var(--green); background:rgba(57,255,20,0.15); color:var(--green); pointer-events:none; }
+.quiz-opt.wrong   { border-color:var(--red);   background:rgba(255,68,85,0.15);  color:var(--red);   pointer-events:none; }
+
+/* ════════════════════════════════════════════
+   SCREEN 3 – MODEL THE ORBIT
+════════════════════════════════════════════ */
+#model-stage {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  height: 320px;
+  margin: 0 auto;
+  border-radius: 20px;
+  background: rgba(2,8,20,0.8);
+  border: 1.5px solid rgba(0,229,255,0.18);
+  overflow: hidden;
+}
+#model-canvas { width:100%; height:100%; }
+#model-speed {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(to right, rgba(0,229,255,0.2), rgba(255,215,0,0.3));
+  outline: none;
+  cursor: pointer;
+  margin: 10px 0;
+}
+#model-speed::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--gold));
+  box-shadow: 0 0 14px rgba(0,229,255,0.6);
+  cursor: pointer;
+}
+.model-stats {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.stat-box {
+  flex: 1;
+  min-width: 150px;
+  background: rgba(8,20,55,0.8);
+  border: 1.5px solid rgba(155,89,240,0.3);
+  border-radius: 14px;
+  padding: 14px 16px;
+  text-align: center;
+}
+.stat-val {
+  font-family: 'Orbitron', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--purple);
+  text-shadow: 0 0 12px rgba(155,89,240,0.6);
+}
+.stat-lbl { font-size: 13px; color:rgba(232,244,255,0.55); margin-top:4px; font-weight:700; }
+
+/* Orbit Q&A */
+.oqa { margin-top:18px; display:flex; flex-direction:column; gap:12px; }
+.oqa-item {
+  background: rgba(8,20,55,0.7);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.oqa-q {
+  padding: 15px 18px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s;
+}
+.oqa-q:hover { background:rgba(0,229,255,0.08); }
+.oqa-q .arr { font-size:20px; transition:transform 0.25s; flex-shrink:0; }
+.oqa-item.open .oqa-q .arr { transform:rotate(180deg); }
+.oqa-a {
+  display: none;
+  padding: 14px 18px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cyan);
+  line-height: 1.55;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,229,255,0.05);
+}
+.oqa-item.open .oqa-a { display:block; }
+
+/* ════════════════════════════════════════════
+   SCREEN 4 – SCALE MODEL
+════════════════════════════════════════════ */
+#scale-stage {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  height: 140px;
+  margin: 0 auto 10px;
+  background: rgba(2,8,20,0.8);
+  border: 1.5px solid rgba(255,215,0,0.18);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+#scale-earth {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%,#3a9fd5 0%,#1a6fc4 40%,#073060 100%);
+  box-shadow: 0 0 20px rgba(26,111,196,0.5);
+  flex-shrink: 0;
+  transition: width 0.5s, height 0.5s;
+}
+#scale-moon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%,#d4d4d4 0%,#a8a8a8 50%,#4a4a4a 100%);
+  box-shadow: 0 0 10px rgba(160,160,160,0.3);
+  flex-shrink: 0;
+  transition: width 0.5s, height 0.5s;
+}
+#scale-dist-line {
+  position: absolute;
+  top: 50%;
+  left: 60px;
+  right: 60px;
+  height: 1px;
+  background: rgba(255,215,0,0.25);
+  border-top: 1px dashed rgba(255,215,0,0.4);
+}
+.scale-slider-wrap {
+  background: rgba(8,20,55,0.8);
+  border: 1.5px solid rgba(255,215,0,0.25);
+  border-radius: var(--radius);
+  padding: 18px 24px;
+  margin: 14px 0;
+}
+.scale-slider-wrap input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(to right,rgba(255,215,0,0.2),rgba(57,255,20,0.25));
+  outline: none;
+  cursor: pointer;
+}
+.scale-slider-wrap input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--green));
+  box-shadow: 0 0 14px rgba(255,215,0,0.6);
+  cursor: pointer;
+}
+#scale-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.scale-fact {
+  background: rgba(8,20,55,0.8);
+  border: 1.5px solid rgba(155,89,240,0.25);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.scale-fact span { color:var(--purple); font-family:'Orbitron',monospace; font-size:13px; }
+
+/* Match game */
+#match-game {
+  margin-top: 20px;
+}
+.match-pairs {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+}
+.match-left, .match-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 200px;
+}
+.m-item {
+  min-height: 52px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.05);
+  transition: all 0.22s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.m-item:hover { border-color:var(--cyan); background:rgba(0,229,255,0.08); }
+.m-item.sel   { border-color:var(--gold); background:rgba(255,215,0,0.12);
+  box-shadow:0 0 14px rgba(255,215,0,0.3); }
+.m-item.match-ok  { border-color:var(--green); background:rgba(57,255,20,0.1);
+  color:var(--green); pointer-events:none; }
+.m-item.match-err { border-color:var(--red); background:rgba(255,68,85,0.1);
+  color:var(--red); }
+
+.s-complete {
+  display: none;
+  margin-top:18px;
+  background: rgba(57,255,20,0.07);
+  border: 2px solid var(--green);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  animation: screenIn 0.5s ease;
+}
+.s-complete.show { display:block; }
+/* legacy alias */
+#s4-complete { /* uses .s-complete */ }
+
+/* ════════════════════════════════════════════
+   VOCAB GLOSSARY BAR
+════════════════════════════════════════════ */
+#vocab-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.vocab-pill {
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  background: rgba(255,107,0,0.15);
+  border: 1.5px solid rgba(255,107,0,0.4);
+  color: #ff9f50;
+  transition: all 0.22s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.vocab-pill:hover { background:rgba(255,107,0,0.28); transform:scale(1.04); }
+
+#vocab-popup {
+  display: none;
+  margin-top: 10px;
+  background: rgba(8,20,55,0.9);
+  border: 2px solid rgba(255,107,0,0.5);
+  border-radius: 16px;
+  padding: 16px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.6;
+  animation: screenIn 0.3s ease;
+}
+#vocab-popup.show { display: block; }
+</style>
+</head>
+<body>
+
+<canvas id="starCanvas"></canvas>
+
+<!-- ════════════ TOAST ════════════ -->
+<div id="toast">✅ Correct!</div>
+
+<!-- ════════════ SIDEBAR ════════════ -->
+<nav id="sidebar">
+  <div class="sb-logo">🌑 SPACE<br>SCIENCE</div>
+  <div class="sb-unit">Unit 6.2<br>The Moon</div>
+  <div class="sb-divider"></div>
+
+  <button class="nav-btn active" id="nb0" onclick="goTo(0)" aria-label="Getting Started">
+    <span class="ni">🐰</span>Myths &amp; Facts
+    <div class="nav-dot" id="dot0"></div>
+  </button>
+  <button class="nav-btn" id="nb1" onclick="goTo(1)" aria-label="Moon Facts">
+    <span class="ni">🌑</span>Moon Facts
+    <div class="nav-dot" id="dot1"></div>
+  </button>
+  <button class="nav-btn" id="nb2" onclick="goTo(2)" aria-label="Model Orbit">
+    <span class="ni">🔗</span>The Orbit
+    <div class="nav-dot" id="dot2"></div>
+  </button>
+  <button class="nav-btn" id="nb3" onclick="goTo(3)" aria-label="Scale Model">
+    <span class="ni">📏</span>Scale Model
+    <div class="nav-dot" id="dot3"></div>
+  </button>
+
+  <div class="sb-divider"></div>
+  <button class="sb-arrow" id="btnUp"   onclick="navigate(-1)" disabled aria-label="Previous">▲</button>
+  <div id="prog-track"><div id="prog-fill"></div></div>
+  <button class="sb-arrow" id="btnDown" onclick="navigate(1)"  aria-label="Next">▼</button>
+  <div class="sb-divider"></div>
+  <div id="sb-timer">⏱ 0:00</div>
+</nav>
+
+<!-- ════════════ MAIN AREA ════════════ -->
+<main id="main">
+
+  <!-- ──────── SCREEN 1 : MYTHS & FACTS ──────── -->
+  <section class="screen active" id="screen0">
+    <div class="tag">Screen 1 of 4 · Getting Started · 10 min</div>
+    <h1 class="s-title">🐰 Moon – Myths &amp; Facts</h1>
+    <p class="s-sub">Some things people say about the Moon are <span class="glow-k">NOT true</span>. Can you sort them?</p>
+
+    <div class="card card-gold">
+      <div class="card-title glow-g">💬 What do you know about the Moon?</div>
+      <p style="font-size:16px;line-height:1.65;color:rgba(232,244,255,0.8);">
+        An old Chinese story says a <strong>rabbit</strong> lives on the Moon 🐰 — but that is just a story!<br>
+        Tap each statement below. Then sort it into <span class="glow-g">TRUE ✅</span> or <span style="color:var(--red)">NOT TRUE ❌</span>.
+      </p>
+    </div>
+
+    <div id="s1-chips">
+      <div class="myth-chip" id="chip0" onclick="selectChip(0)">🐰 A rabbit lives on the Moon</div>
+      <div class="myth-chip" id="chip1" onclick="selectChip(1)">🔵 The Moon is round like a ball</div>
+      <div class="myth-chip" id="chip2" onclick="selectChip(2)">🧀 The Moon is made of cheese</div>
+      <div class="myth-chip" id="chip3" onclick="selectChip(3)">⭕ The Moon goes around the Earth</div>
+      <div class="myth-chip" id="chip4" onclick="selectChip(4)">✨ The Moon makes its own light</div>
+      <div class="myth-chip" id="chip5" onclick="selectChip(5)">🪨 The Moon has craters</div>
+      <div class="myth-chip" id="chip6" onclick="selectChip(6)">👨‍🚀 A human has walked on the Moon</div>
+    </div>
+
+    <div id="s1-zones">
+      <div class="sort-zone zone-true" onclick="dropChip(true)">
+        <div class="zone-title" style="color:var(--green)">✅ TRUE – It really happens!</div>
+        <div class="zone-items" id="zone-true"></div>
+      </div>
+      <div class="sort-zone zone-false" onclick="dropChip(false)">
+        <div class="zone-title" style="color:var(--red)">❌ NOT TRUE – Just a story!</div>
+        <div class="zone-items" id="zone-false"></div>
+      </div>
+    </div>
+
+    <div id="s1-score" style="margin-top:16px;font-family:'Orbitron',monospace;font-size:16px;color:var(--green);min-height:28px;"></div>
+    <div id="s1-next" style="display:none;margin-top:14px;">
+      <button class="btn btn-green" onclick="navigate(1)">Next Section →</button>
+    </div>
+
+    <div id="vocab-bar" style="margin-top:22px;">
+      <div class="card-title glow-c" style="width:100%;margin-bottom:0;">📖 New Words:</div>
+      <div class="vocab-pill" onclick="showVocab('orbit')">orbit</div>
+      <div class="vocab-pill" onclick="showVocab('crater')">crater</div>
+      <div class="vocab-pill" onclick="showVocab('scale')">scale model</div>
+    </div>
+    <div id="vocab-popup"></div>
+  </section>
+
+  <!-- ──────── SCREEN 2 : MOON FACTS ──────── -->
+  <section class="screen" id="screen1">
+    <div class="tag">Screen 2 of 4 · Moon Facts · 10 min</div>
+    <h1 class="s-title">🌑 Facts About the Moon</h1>
+    <p class="s-sub">The Moon <span class="glow-c">orbits</span> the Earth. Tap the tiles to learn more!</p>
+
+    <!-- Orbit Animation -->
+    <div class="card" style="margin-bottom:18px;">
+      <div class="card-title glow-c">🔄 The Moon's Orbit Animation</div>
+      <div id="orbit-stage">
+        <canvas id="orbit-canvas"></canvas>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap;">
+        <button class="btn btn-c" onclick="toggleOrbit()" id="orbitBtn">▶ Start Orbit</button>
+        <span style="font-size:15px;font-weight:700;color:rgba(232,244,255,0.65);">
+          The Moon takes <span class="glow-g">29 days</span> to go around the Earth once.
+        </span>
+      </div>
+    </div>
+
+    <!-- Fact tiles -->
+    <div class="fact-grid">
+      <div class="fact-tile" onclick="flipFact(this)">
+        <div class="fi">⭕</div>
+        <div class="fq">What shape is the Moon's orbit?</div>
+        <div class="fa">The Moon's orbit is a <strong>circle</strong> (oval shape). The Moon goes all the way around the Earth!</div>
+      </div>
+      <div class="fact-tile" onclick="flipFact(this)">
+        <div class="fi">📅</div>
+        <div class="fq">How long does one orbit take?</div>
+        <div class="fa">The Moon takes <strong>29 days</strong> to orbit (go around) the Earth once. That is almost one month!</div>
+      </div>
+      <div class="fact-tile" onclick="flipFact(this)">
+        <div class="fi">🪨</div>
+        <div class="fq">What are craters? How are they made?</div>
+        <div class="fa"><strong>Craters</strong> are dents on the Moon's surface. They are made when space rocks crash into the Moon at very high speed!</div>
+      </div>
+      <div class="fact-tile" onclick="flipFact(this)">
+        <div class="fi">👨‍🚀</div>
+        <div class="fq">Has a human been to the Moon?</div>
+        <div class="fa">Yes! <strong>Neil Armstrong</strong> was the first person to walk on the Moon in <strong>1969</strong>. The Moon is the only place in space humans have ever been!</div>
+      </div>
+      <div class="fact-tile" onclick="flipFact(this)">
+        <div class="fi">💡</div>
+        <div class="fq">Does the Moon make its own light?</div>
+        <div class="fa">No! The Moon does <strong>not</strong> make its own light. It reflects (bounces) light from the <strong>Sun</strong> — like a mirror!</div>
+      </div>
+      <div class="fact-tile" onclick="flipFact(this)">
+        <div class="fi">⬇️</div>
+        <div class="fq">Does the Moon have gravity?</div>
+        <div class="fa">Yes! The Moon has gravity, but it is <strong>weaker</strong> than Earth's gravity. On the Moon you can jump very high and float down slowly!</div>
+      </div>
+    </div>
+
+    <!-- Quick Quiz -->
+    <div class="card card-purple" style="margin-top:20px;">
+      <div class="card-title glow-p">🧠 Quick Quiz – What do you remember?</div>
+      <div class="quiz-row">
+        <div class="quiz-q">1. How long does the Moon take to orbit the Earth?</div>
+        <div class="quiz-opts">
+          <div class="quiz-opt" onclick="checkQ(this,'wrong')">7 days</div>
+          <div class="quiz-opt" onclick="checkQ(this,'correct')">29 days</div>
+          <div class="quiz-opt" onclick="checkQ(this,'wrong')">365 days</div>
+        </div>
+      </div>
+      <div class="quiz-row" style="margin-top:16px;">
+        <div class="quiz-q">2. What makes craters on the Moon?</div>
+        <div class="quiz-opts">
+          <div class="quiz-opt" onclick="checkQ(this,'wrong')">Wind and rain 🌧️</div>
+          <div class="quiz-opt" onclick="checkQ(this,'correct')">Space rocks hitting the surface 🪨</div>
+          <div class="quiz-opt" onclick="checkQ(this,'wrong')">Volcanoes 🌋</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2 complete -->
+    <div id="s2-complete" class="s-complete">
+      <div style="font-size:52px;margin-bottom:12px;">🌑⭐🔭</div>
+      <div style="font-family:'Orbitron',monospace;font-size:20px;color:var(--green);margin-bottom:12px;">MOON EXPERT!</div>
+      <div style="font-size:16px;line-height:1.75;">
+        You've learned that the Moon <span class="glow-c">orbits</span> Earth every <span class="glow-g">29 days</span>,<br>
+        reflects <span class="glow-g">sunlight</span>, and has <span class="glow-p">craters</span> made by space rocks! 🪨
+      </div>
+      <button class="btn btn-green" onclick="navigate(1)" style="margin-top:20px;">Next Section →</button>
+    </div>
+  </section>
+
+  <!-- ──────── SCREEN 3 : MODEL THE ORBIT ──────── -->
+  <section class="screen" id="screen2">
+    <div class="tag">Screen 3 of 4 · Think Like a Scientist · 10 min</div>
+    <h1 class="s-title">🔗 Modelling the Moon's Orbit</h1>
+    <p class="s-sub">Scientists use <span class="glow-c">models</span> to show how the Moon moves. Watch the model orbit below!</p>
+
+    <div class="card card-pink" style="margin-bottom:18px;">
+      <div class="card-title glow-k">👩‍🔬 Think Like a Scientist – Model the Orbit</div>
+      <p style="font-size:16px;font-weight:700;line-height:1.65;color:rgba(232,244,255,0.82);">
+        Sofia squashed paper into a ball and tied string to it. She spun the ball around her head — just like the Moon orbits the Earth! The <strong>string = gravity</strong> that keeps the Moon close to Earth.
+      </p>
+    </div>
+
+    <div class="card" style="margin-bottom:18px;">
+      <div class="card-title glow-c">🌍 Interactive Orbit Model</div>
+      <div id="model-stage">
+        <canvas id="model-canvas"></canvas>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div style="font-size:16px;font-weight:800;color:var(--gold);margin-bottom:8px;">⚡ Change Orbit Speed:</div>
+        <input type="range" id="model-speed" min="0.5" max="5" step="0.1" value="1" oninput="setOrbitSpeed(this.value)">
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px;">
+          <span>🐢 Slow</span><span>🚀 Fast</span>
+        </div>
+      </div>
+
+      <div class="model-stats">
+        <div class="stat-box">
+          <div class="stat-val" id="stat-days">0</div>
+          <div class="stat-lbl">Days of Orbit</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="stat-orbits">0</div>
+          <div class="stat-lbl">Full Orbits</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">29</div>
+          <div class="stat-lbl">Real Days per Orbit</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;">
+        <button class="btn btn-c" onclick="toggleModel()" id="modelBtn">▶ Start</button>
+        <button class="btn btn-p" onclick="resetModel()">🔄 Reset</button>
+      </div>
+    </div>
+
+    <!-- Q&A accordion -->
+    <div class="oqa">
+      <div class="card-title glow-p" style="margin-bottom:0;">❓ Answer these questions:</div>
+      <div class="oqa-item" onclick="toggleOqa(this)">
+        <div class="oqa-q">1. What shape is the Moon's orbit? <span class="arr">▼</span></div>
+        <div class="oqa-a">The Moon's orbit is an <strong>oval (ellipse)</strong> shape — like a slightly squashed circle! The Earth is near the middle.</div>
+      </div>
+      <div class="oqa-item" onclick="toggleOqa(this)">
+        <div class="oqa-q">2. What is being the Moon in Sofia's string model? <span class="arr">▼</span></div>
+        <div class="oqa-a">The <strong>paper ball</strong> is being the Moon. It moves in a circle — just like the real Moon moves around the Earth!</div>
+      </div>
+      <div class="oqa-item" onclick="toggleOqa(this)">
+        <div class="oqa-q">3. What does the string represent in the model? <span class="arr">▼</span></div>
+        <div class="oqa-a">The string represents <strong>gravity</strong>. Gravity is the force that keeps the Moon moving around the Earth — just like the string keeps the paper ball moving in a circle!</div>
+      </div>
+      <div class="oqa-item" onclick="toggleOqa(this)">
+        <div class="oqa-q">4. Why does the Moon not fly away into space? <span class="arr">▼</span></div>
+        <div class="oqa-a">Because <strong>gravity</strong> always pulls the Moon towards the Earth! Even though the Moon is moving fast, gravity keeps pulling it back — so it keeps going around and around!</div>
+      </div>
+    </div>
+
+    <!-- Section 3 complete -->
+    <div id="s3-complete" class="s-complete">
+      <div style="font-size:52px;margin-bottom:12px;">🔗🌑💫</div>
+      <div style="font-family:'Orbitron',monospace;font-size:20px;color:var(--green);margin-bottom:12px;">ORBIT MODELLER!</div>
+      <div style="font-size:16px;line-height:1.75;">
+        You understand that <span class="glow-g">gravity</span> (the string) keeps the Moon<br>
+        moving in its <span class="glow-c">orbit</span> — it never flies away! 🚀
+      </div>
+      <button class="btn btn-green" onclick="navigate(1)" style="margin-top:20px;">Final Challenge →</button>
+    </div>
+  </section>
+
+  <!-- ──────── SCREEN 4 : SCALE MODEL ──────── -->
+  <section class="screen" id="screen3">
+    <div class="tag">Screen 4 of 4 · Scale Model Plenary · 10 min</div>
+    <h1 class="s-title">📏 The Scale Model</h1>
+    <p class="s-sub">A <span class="glow-g">scale model</span> shows things at the <strong>correct size</strong> compared to each other. Move the slider to see!</p>
+
+    <!-- Visual scale slider -->
+    <div class="card card-gold" style="margin-bottom:18px;">
+      <div class="card-title glow-g">🌍 🌑 Earth vs Moon – How big? How far?</div>
+      <div id="scale-stage">
+        <div id="scale-dist-line"></div>
+        <div id="scale-earth"></div>
+        <div id="scale-moon"></div>
+      </div>
+      <div class="scale-slider-wrap">
+        <div style="font-size:16px;font-weight:800;color:var(--gold);margin-bottom:10px;">
+          🔬 Zoom: 1 cm = <span id="zoom-label">1000</span> km
+        </div>
+        <input type="range" id="zoom-slider" min="1" max="5" step="0.1" value="3"
+               oninput="updateScale(this.value)">
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px;">
+          <span>← Zoomed Out</span><span>Zoomed In →</span>
+        </div>
+      </div>
+
+      <div id="scale-info">
+        <div class="scale-fact">
+          <span>EARTH SIZE</span><br>
+          About <strong>13,000 km</strong> across.<br>
+          In the model: <strong>13 cm</strong> 🌍
+        </div>
+        <div class="scale-fact">
+          <span>MOON SIZE</span><br>
+          About <strong>3,500 km</strong> across.<br>
+          In the model: <strong>3.5 cm</strong> 🌑
+        </div>
+        <div class="scale-fact">
+          <span>DISTANCE</span><br>
+          Moon is <strong>385,000 km</strong> away.<br>
+          In the model: <strong>385 cm</strong> 🔭
+        </div>
+        <div class="scale-fact">
+          <span>SCALE RULE</span><br>
+          Every <strong>1,000 km</strong><br>= <strong>1 cm</strong> in the model 📏
+        </div>
+      </div>
+    </div>
+
+    <!-- Match game -->
+    <div class="card card-purple" id="match-game">
+      <div class="card-title glow-p">🎮 Match the Scale Facts!</div>
+      <p style="font-size:15px;font-weight:700;color:rgba(232,244,255,0.7);margin-bottom:4px;">
+        Tap a <span class="glow-g">measurement on the left</span> → then tap the matching <span class="glow-c">fact on the right</span>.
+      </p>
+      <div id="match-score" style="font-family:'Orbitron',monospace;font-size:15px;color:var(--green);margin:8px 0;">⭐ Score: <span id="mscore">0</span> / 4</div>
+
+      <div class="match-pairs">
+        <div class="match-left">
+          <div class="m-item" id="ml0" onclick="selMatch('l',0)">📏 13 cm</div>
+          <div class="m-item" id="ml1" onclick="selMatch('l',1)">📏 3.5 cm</div>
+          <div class="m-item" id="ml2" onclick="selMatch('l',2)">📏 385 cm</div>
+          <div class="m-item" id="ml3" onclick="selMatch('l',3)">📏 1 cm</div>
+        </div>
+        <div class="match-right">
+          <div class="m-item" id="mr0" onclick="selMatch('r',0)">🌑 Moon's size in model</div>
+          <div class="m-item" id="mr1" onclick="selMatch('r',1)">🌍 Earth's size in model</div>
+          <div class="m-item" id="mr2" onclick="selMatch('r',2)">= 1,000 km in real life</div>
+          <div class="m-item" id="mr3" onclick="selMatch('r',3)">📡 Distance to Moon in model</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completion -->
+    <div id="s4-complete" class="s-complete">
+      <div style="font-size:56px;margin-bottom:12px;">🎉🌟🚀</div>
+      <div style="font-family:'Orbitron',monospace;font-size:22px;color:var(--green);margin-bottom:14px;">AMAZING SCIENTIST!</div>
+      <div style="font-size:17px;line-height:1.75;">
+        You now know that:<br>
+        🌑 The Moon <span class="glow-c">orbits</span> the Earth every <span class="glow-g">29 days</span>.<br>
+        🪨 <span class="glow-p">Craters</span> are made by space rocks hitting the Moon.<br>
+        👨‍🚀 <strong>Neil Armstrong</strong> walked on the Moon in <strong>1969</strong>.<br>
+        📏 A <span class="glow-g">scale model</span> shows things at the correct size!
+      </div>
+      <button class="btn btn-green" onclick="resetMatch()" style="margin-top:20px;">🔄 Play Again!</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- ════════════ JAVASCRIPT ════════════ -->
+<script>
+/* ─── STARFIELD ─── */
+const SC = document.getElementById('starCanvas');
+const SX = SC.getContext('2d');
+let stars = [];
+function initStars() {
+  SC.width  = window.innerWidth;
+  SC.height = window.innerHeight;
+  stars = Array.from({length:240}, () => ({
+    x: Math.random() * SC.width,
+    y: Math.random() * SC.height,
+    r: Math.random() * 1.7 + 0.2,
+    p: Math.random() * Math.PI * 2,
+    sp: Math.random() * 0.007 + 0.003
+  }));
+}
+function drawStars() {
+  SX.clearRect(0, 0, SC.width, SC.height);
+  stars.forEach(s => {
+    s.p += s.sp;
+    const a = 0.25 + 0.55 * Math.abs(Math.sin(s.p));
+    SX.beginPath();
+    SX.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    SX.fillStyle = `rgba(255,255,255,${a})`;
+    SX.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+window.addEventListener('resize', initStars);
+initStars(); drawStars();
+
+/* ─── NAVIGATION ─── */
+let cur = 0;
+const TOTAL = 4;
+const done  = [false,false,false,false];
+
+function goTo(n) {
+  document.getElementById('main').scrollTo({top:0, behavior:'smooth'});
+  document.querySelectorAll('.screen').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.toggle('active', i===n));
+  cur = n;
+  document.getElementById('btnUp').disabled   = n === 0;
+  document.getElementById('btnDown').disabled = n === TOTAL-1;
+  document.getElementById('prog-fill').style.height = ((n+1)/TOTAL*100) + '%';
+  // Re-init canvases if needed
+  if (n===1) { setTimeout(()=>{ initOrbitCanvas(); },50); }
+  if (n===2) { setTimeout(()=>{ initModelCanvas(); },50); }
+  if (n===3) { setTimeout(()=>{ updateScale(document.getElementById('zoom-slider').value); },50); }
+}
+function navigate(d) { const nx = cur+d; if(nx>=0 && nx<TOTAL) goTo(nx); }
+function markDone(n) {
+  done[n] = true;
+  document.getElementById('dot'+n).classList.add('done');
+}
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowDown'||e.key==='ArrowRight') navigate(1);
+  if(e.key==='ArrowUp'||e.key==='ArrowLeft')   navigate(-1);
+  if(e.key>='1'&&e.key<='4') goTo(parseInt(e.key)-1);
+});
+
+/* ─── TIMER ─── */
+let elapsed = 0;
+setInterval(()=>{
+  elapsed++;
+  const m = Math.floor(elapsed/60), s = elapsed%60;
+  document.getElementById('sb-timer').textContent = `⏱ ${m}:${s.toString().padStart(2,'0')}`;
+}, 1000);
+
+/* ─── TOAST ─── */
+let toastT;
+function showToast(msg, color='#00e5ff') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.color = color;
+  t.style.borderColor = color + '55';
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+/* ─── STAR BURSTS ─── */
+function spawnStars(n=6) {
+  const em = ['⭐','🌟','✨','💫','🌙'];
+  for(let i=0;i<n;i++){
+    const s = document.createElement('div');
+    s.className = 'star-burst';
+    s.textContent = em[Math.floor(Math.random()*em.length)];
+    s.style.left  = (15+Math.random()*70)+'vw';
+    s.style.top   = (10+Math.random()*70)+'vh';
+    s.style.animationDelay = (Math.random()*0.4)+'s';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(), 1600);
+  }
+}
+
+/* ══════════════════════════════════════
+   SCREEN 1 – MYTH SORT
+══════════════════════════════════════ */
+const myths = [
+  {text:'🐰 A rabbit lives on the Moon', truth:false},
+  {text:'🔵 The Moon is round like a ball', truth:true},
+  {text:'🧀 The Moon is made of cheese', truth:false},
+  {text:'⭕ The Moon goes around the Earth', truth:true},
+  {text:'✨ The Moon makes its own light', truth:false},
+  {text:'🪨 The Moon has craters', truth:true},
+  {text:'👨‍🚀 A human has walked on the Moon', truth:true}
+];
+let selChip    = null;
+let sortedCount = 0;
+const sorted   = new Array(myths.length).fill(null);
+
+function selectChip(i) {
+  if(sorted[i]!==null) return;
+  selChip = i;
+  document.querySelectorAll('.myth-chip').forEach((c,j)=>{
+    if(sorted[j]===null) c.classList.toggle('selected', j===i);
+  });
+  showToast('👆 Now tap TRUE or NOT TRUE zone!', '#ffd700');
+}
+
+function dropChip(answer) {
+  if(selChip===null) { showToast('☝️ First tap a statement!', '#ff9f50'); return; }
+  const correct = myths[selChip].truth === answer;
+  const chipEl  = document.getElementById('chip'+selChip);
+  const zone    = document.getElementById('zone-'+(answer?'true':'false'));
+
+  if(correct) {
+    sorted[selChip] = answer;
+    chipEl.classList.remove('selected');
+    chipEl.classList.add(answer?'sorted-true':'sorted-false');
+    sortedCount++;
+    // Add mini chip to zone
+    const zc = document.createElement('div');
+    zc.className = 'zone-chip '+(answer?'t':'f');
+    zc.textContent = myths[selChip].text;
+    zone.appendChild(zc);
+    showToast('✅ Correct!', '#39ff14');
+    spawnStars(4);
+    if(sortedCount >= myths.length) {
+      document.getElementById('s1-score').textContent = '🌟 Well done! You sorted all 7 statements!';
+      document.getElementById('s1-next').style.display = 'block';
+      markDone(0);
+      spawnStars(12);
+    }
+  } else {
+    chipEl.classList.add('shake');
+    chipEl.classList.remove('selected');
+    selChip = null;
+    showToast('❌ Try again! Think carefully…', '#ff4455');
+    setTimeout(()=>chipEl.classList.remove('shake'), 500);
+    return;
+  }
+  selChip = null;
+}
+
+/* ─── VOCAB ─── */
+const vocabData = {
+  orbit: '⭕ <strong>Orbit</strong> – the path a moon takes as it moves around a planet. The Moon\'s orbit around the Earth is a circle shape.',
+  crater: '🪨 <strong>Crater</strong> – a large dent (hole) on the surface of the Moon or a planet. Craters are made when space rocks crash into the surface at very high speed!',
+  scale: '📏 <strong>Scale model</strong> – a model that shows things at the correct size compared to each other. For example: 1 cm in the model = 1,000 km in real life!'
+};
+function showVocab(k) {
+  const p = document.getElementById('vocab-popup');
+  if(p.classList.contains('show') && p.dataset.key===k) {
+    p.classList.remove('show'); return;
+  }
+  p.innerHTML = vocabData[k];
+  p.dataset.key = k;
+  p.classList.add('show');
+}
+
+/* ══════════════════════════════════════
+   SCREEN 2 – ORBIT ANIMATION
+══════════════════════════════════════ */
+let orbitAngle = 0, orbitRunning = false, orbitRAF;
+let orbitCanvas, orbitCtx, orbitW, orbitH;
+
+/* Quiz completion tracking */
+let quizCorrectCount = 0;
+function trackQuizAnswer() {
+  quizCorrectCount++;
+  if(quizCorrectCount >= 2) {
+    markDone(1);
+    const s2 = document.getElementById('s2-complete');
+    if(s2 && !s2.classList.contains('show')) { s2.classList.add('show'); spawnStars(12); }
+  }
+}
+
+function initOrbitCanvas() {
+  orbitCanvas = document.getElementById('orbit-canvas');
+  const stage = document.getElementById('orbit-stage');
+  orbitW = stage.offsetWidth || 500;
+  orbitH = Math.round(orbitW * 0.65);
+  stage.style.height = orbitH + 'px';
+  orbitCanvas.width  = orbitW;
+  orbitCanvas.height = orbitH;
+  drawOrbit();
+}
+
+function drawOrbit() {
+  if(!orbitCtx) { orbitCtx = orbitCanvas.getContext('2d'); }
+  const cx = orbitW/2, cy = orbitH/2;
+  const rx = orbitW*0.40, ry = orbitH*0.36;
+  const mr = 14; // moon radius
+  orbitCtx.clearRect(0,0,orbitW,orbitH);
+
+  // BG gradient
+  const bg = orbitCtx.createRadialGradient(cx,cy,0,cx,cy,orbitW*0.6);
+  bg.addColorStop(0,'#06103a'); bg.addColorStop(1,'#020814');
+  orbitCtx.fillStyle = bg;
+  orbitCtx.fillRect(0,0,orbitW,orbitH);
+
+  // Orbit path
+  orbitCtx.beginPath();
+  orbitCtx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI*2);
+  orbitCtx.strokeStyle = 'rgba(255,80,80,0.55)';
+  orbitCtx.lineWidth = 2;
+  orbitCtx.setLineDash([8,5]);
+  orbitCtx.stroke();
+  orbitCtx.setLineDash([]);
+
+  // Earth
+  const eg = orbitCtx.createRadialGradient(cx-8,cy-8,2,cx,cy,28);
+  eg.addColorStop(0,'#3a9fd5'); eg.addColorStop(0.5,'#1a6fc4'); eg.addColorStop(1,'#073060');
+  orbitCtx.beginPath();
+  orbitCtx.arc(cx, cy, 28, 0, Math.PI*2);
+  orbitCtx.fillStyle = eg;
+  orbitCtx.shadowColor = 'rgba(26,111,196,0.6)';
+  orbitCtx.shadowBlur = 18;
+  orbitCtx.fill();
+  orbitCtx.shadowBlur = 0;
+
+  // Earth label
+  orbitCtx.fillStyle = 'rgba(232,244,255,0.8)';
+  orbitCtx.font = 'bold 12px Nunito, sans-serif';
+  orbitCtx.textAlign = 'center';
+  orbitCtx.fillText('Earth 🌍', cx, cy+44);
+
+  // Moon position
+  const mx = cx + rx * Math.cos(orbitAngle);
+  const my = cy + ry * Math.sin(orbitAngle);
+
+  // Trail
+  for(let i=1;i<=12;i++){
+    const ta = orbitAngle - i*0.08;
+    const tx = cx + rx * Math.cos(ta);
+    const ty = cy + ry * Math.sin(ta);
+    orbitCtx.beginPath();
+    orbitCtx.arc(tx, ty, mr*(1-i/14), 0, Math.PI*2);
+    orbitCtx.fillStyle = `rgba(210,210,210,${0.12*(1-i/14)})`;
+    orbitCtx.fill();
+  }
+
+  // Moon
+  const mg = orbitCtx.createRadialGradient(mx-4,my-4,1,mx,my,mr);
+  mg.addColorStop(0,'#d4d4d4'); mg.addColorStop(0.5,'#a8a8a8'); mg.addColorStop(1,'#4a4a4a');
+  orbitCtx.beginPath();
+  orbitCtx.arc(mx, my, mr, 0, Math.PI*2);
+  orbitCtx.fillStyle = mg;
+  orbitCtx.shadowColor = 'rgba(200,200,200,0.4)';
+  orbitCtx.shadowBlur = 10;
+  orbitCtx.fill();
+  orbitCtx.shadowBlur = 0;
+  orbitCtx.fillStyle = 'rgba(232,244,255,0.75)';
+  orbitCtx.font = 'bold 11px Nunito, sans-serif';
+  orbitCtx.fillText('Moon 🌑', mx, my + mr + 14);
+}
+
+function toggleOrbit() {
+  orbitRunning = !orbitRunning;
+  document.getElementById('orbitBtn').textContent = orbitRunning ? '⏸ Pause' : '▶ Start Orbit';
+  if(orbitRunning) { markDone(1); animOrbit(); }
+  else cancelAnimationFrame(orbitRAF);
+}
+function animOrbit() {
+  orbitAngle += 0.015;
+  if(orbitAngle > Math.PI*2) orbitAngle -= Math.PI*2;
+  drawOrbit();
+  if(orbitRunning) orbitRAF = requestAnimationFrame(animOrbit);
+}
+
+function flipFact(el) {
+  el.classList.toggle('open');
+  if(el.classList.contains('open')) { spawnStars(2); }
+}
+
+function checkQ(el, result) {
+  const opts = el.parentElement.querySelectorAll('.quiz-opt');
+  // Prevent changing answer once correct has been set
+  if([...opts].some(o => o.classList.contains('correct'))) return;
+  opts.forEach(o => o.classList.remove('correct','wrong'));
+  el.classList.add(result);
+  if(result==='correct') { showToast('✅ Correct! Great job! ⭐', '#39ff14'); spawnStars(5); trackQuizAnswer(); }
+  else { el.classList.add('shake'); showToast('❌ Try again!', '#ff4455'); setTimeout(()=>el.classList.remove('shake'),500); }
+}
+
+/* ══════════════════════════════════════
+   SCREEN 3 – MODEL ORBIT
+══════════════════════════════════════ */
+let modelCanvas, modelCtx, modelW, modelH;
+let modelAngle  = 0, modelRunning = false, modelRAF;
+let modelSpeed  = 1;
+let modelDays   = 0, modelOrbits = 0;
+
+function initModelCanvas() {
+  modelCanvas = document.getElementById('model-canvas');
+  const stage = document.getElementById('model-stage');
+  modelW = stage.offsetWidth  || 500;
+  modelH = stage.offsetHeight || 300;
+  modelCanvas.width  = modelW;
+  modelCanvas.height = modelH;
+  modelCtx = modelCanvas.getContext('2d');
+  drawModel();
+}
+
+function drawModel() {
+  if(!modelCtx) return;
+  const cx = modelW/2, cy = modelH/2;
+  const rx = modelW*0.38, ry = modelH*0.35;
+
+  // BG
+  modelCtx.clearRect(0,0,modelW,modelH);
+  const bg = modelCtx.createRadialGradient(cx,cy,0,cx,cy,modelW*0.6);
+  bg.addColorStop(0,'#06103a'); bg.addColorStop(1,'#020814');
+  modelCtx.fillStyle = bg;
+  modelCtx.fillRect(0,0,modelW,modelH);
+
+  // String / orbit ellipse
+  modelCtx.beginPath();
+  modelCtx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI*2);
+  modelCtx.strokeStyle = 'rgba(255,180,0,0.5)';
+  modelCtx.lineWidth = 2.5;
+  modelCtx.stroke();
+
+  // Earth (hand in centre)
+  modelCtx.font = '32px serif';
+  modelCtx.textAlign = 'center';
+  modelCtx.textBaseline = 'middle';
+  modelCtx.fillText('✊', cx, cy);
+  modelCtx.font = 'bold 11px Nunito,sans-serif';
+  modelCtx.fillStyle = 'rgba(232,244,255,0.6)';
+  modelCtx.fillText('Earth', cx, cy+26);
+
+  // String line from centre to ball
+  const bx = cx + rx * Math.cos(modelAngle);
+  const by = cy + ry * Math.sin(modelAngle);
+  modelCtx.beginPath();
+  modelCtx.moveTo(cx, cy);
+  modelCtx.lineTo(bx, by);
+  modelCtx.strokeStyle = 'rgba(255,215,0,0.7)';
+  modelCtx.lineWidth = 2;
+  modelCtx.stroke();
+
+  // Paper ball (Moon)
+  modelCtx.font = '28px serif';
+  modelCtx.textAlign = 'center';
+  modelCtx.textBaseline = 'middle';
+  modelCtx.fillText('🌑', bx, by);
+  modelCtx.font = 'bold 11px Nunito,sans-serif';
+  modelCtx.fillStyle = 'rgba(232,244,255,0.6)';
+  modelCtx.textBaseline = 'top';
+  modelCtx.fillText('Paper Ball (Moon)', bx, by+18);
+
+  // Labels
+  modelCtx.font = 'bold 12px Nunito,sans-serif';
+  modelCtx.fillStyle = 'rgba(255,215,0,0.7)';
+  modelCtx.textAlign = 'left';
+  modelCtx.textBaseline = 'middle';
+  modelCtx.fillText('← String = Gravity', cx+16, cy-ry/2);
+}
+
+function setOrbitSpeed(v) { modelSpeed = parseFloat(v); }
+
+function toggleModel() {
+  modelRunning = !modelRunning;
+  document.getElementById('modelBtn').textContent = modelRunning ? '⏸ Pause' : '▶ Start';
+  if(modelRunning) { markDone(2); animModel(); }
+  else cancelAnimationFrame(modelRAF);
+}
+function resetModel() {
+  modelRunning = false;
+  cancelAnimationFrame(modelRAF);
+  modelAngle = 0; modelDays = 0; modelOrbits = 0;
+  document.getElementById('modelBtn').textContent = '▶ Start';
+  document.getElementById('stat-days').textContent   = '0';
+  document.getElementById('stat-orbits').textContent = '0';
+  drawModel();
+}
+function animModel() {
+  const step = 0.018 * modelSpeed;
+  modelAngle += step;
+  if(modelAngle >= Math.PI*2) {
+    modelAngle -= Math.PI*2;
+    modelOrbits++;
+    document.getElementById('stat-orbits').textContent = modelOrbits;
+  }
+  modelDays = (modelOrbits * 29 + (modelAngle / (Math.PI*2)) * 29).toFixed(1);
+  document.getElementById('stat-days').textContent = modelDays;
+  drawModel();
+  if(modelRunning) modelRAF = requestAnimationFrame(animModel);
+}
+
+const oqaOpened = new Set();
+function toggleOqa(el) {
+  el.classList.toggle('open');
+  if(el.classList.contains('open')) {
+    oqaOpened.add(el);
+    if(oqaOpened.size >= 4) {
+      markDone(2);
+      const s3 = document.getElementById('s3-complete');
+      if(s3 && !s3.classList.contains('show')) { s3.classList.add('show'); spawnStars(10); }
+    }
+  }
+}
+
+/* ══════════════════════════════════════
+   SCREEN 4 – SCALE MODEL
+══════════════════════════════════════ */
+function updateScale(v) {
+  const t = parseFloat(v);
+  // t: 1=zoomed out, 5=zoomed in
+  // Earth diameter in model: 13cm → pixel representation
+  const earthPx = Math.round(20 + t * 14); // 34–90px
+  const moonPx  = Math.round(earthPx * (3.5/13));
+  const stage   = document.getElementById('scale-stage');
+
+  const se = document.getElementById('scale-earth');
+  const sm = document.getElementById('scale-moon');
+  se.style.width  = earthPx + 'px';
+  se.style.height = earthPx + 'px';
+  sm.style.width  = moonPx  + 'px';
+  sm.style.height = moonPx  + 'px';
+
+  document.getElementById('zoom-label').textContent = Math.round(1000/t*10)/10;
+}
+updateScale(3);
+
+/* Match game */
+const matchAnswers = { 0:1, 1:0, 2:3, 3:2 };
+// Left indices map to Right indices:
+// ml0 (13cm) → mr1 (Earth size)
+// ml1 (3.5cm)→ mr0 (Moon size)
+// ml2 (385cm)→ mr3 (distance)
+// ml3 (1cm)  → mr2 (=1000km)
+let mSelSide = null, mSelIdx = null, mScore = 0, mMatched = new Set();
+
+function selMatch(side, idx) {
+  const elId = (side==='l'?'ml':'mr') + idx;
+  if(mMatched.has(elId)) return;
+
+  if(mSelSide === null) {
+    mSelSide = side; mSelIdx = idx;
+    document.querySelectorAll('.m-item').forEach(e => {
+      if(!mMatched.has(e.id)) e.classList.remove('sel');
+    });
+    document.getElementById(elId).classList.add('sel');
+    showToast('👆 Now tap the matching item!', '#ffd700');
+  } else {
+    if(side === mSelSide) {
+      // same side – change selection
+      document.querySelectorAll('.m-item').forEach(e => {
+        if(!mMatched.has(e.id)) e.classList.remove('sel');
+      });
+      mSelIdx = idx;
+      document.getElementById(elId).classList.add('sel');
+      return;
+    }
+    // Cross-side check
+    let li = mSelSide==='l' ? mSelIdx : idx;
+    let ri = mSelSide==='r' ? mSelIdx : idx;
+    const correct = matchAnswers[li] === ri;
+    const lid = 'ml'+li, rid = 'mr'+ri;
+    if(correct) {
+      [lid,rid].forEach(id => {
+        mMatched.add(id);
+        document.getElementById(id).classList.remove('sel');
+        document.getElementById(id).classList.add('match-ok');
+      });
+      mScore++;
+      document.getElementById('mscore').textContent = mScore;
+      showToast('✅ Correct match! ⭐', '#39ff14');
+      spawnStars(5);
+      if(mScore>=4) {
+        setTimeout(()=>{ document.getElementById('s4-complete').classList.add('show'); spawnStars(16); markDone(3); }, 400);
+      }
+    } else {
+      const errId = (side==='l'?'ml':'mr')+idx;
+      document.getElementById(errId).classList.add('match-err','shake');
+      showToast('❌ Not quite! Try again.', '#ff4455');
+      setTimeout(()=>{
+        document.getElementById(errId).classList.remove('match-err','shake');
+      }, 500);
+    }
+    mSelSide = null; mSelIdx = null;
+    document.querySelectorAll('.m-item').forEach(e=>{ if(!mMatched.has(e.id)) e.classList.remove('sel'); });
+  }
+}
+
+function resetMatch() {
+  mScore=0; mSelSide=null; mSelIdx=null; mMatched.clear();
+  document.getElementById('mscore').textContent='0';
+  document.getElementById('s4-complete').classList.remove('show');
+  document.querySelectorAll('.m-item').forEach(e=>{
+    e.classList.remove('sel','match-ok','match-err','shake');
+  });
+}
+
+/* ─── Init first screen canvas on load ─── */
+window.addEventListener('load', () => {
+  // Screen 1 is default; orbit canvas init when navigating to screen 2
+  goTo(0);
+});
+</script>
+</body>
+</html>
